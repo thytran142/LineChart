@@ -146,6 +146,7 @@ public class MainActivity extends AppCompatActivity implements OnChartGestureLis
         }
         return portfolioList;
     }
+
     private class getPortfolio extends AsyncTask<Void, Void,Void> {
 
         @Override
@@ -219,11 +220,13 @@ public class MainActivity extends AppCompatActivity implements OnChartGestureLis
             if(pDialog.isShowing()){
                 pDialog.dismiss();
             }
+            Log.d("Correct value",portfolioArrayList.get(0).getNavPoints().get(100).getAmount()+"");
             addDailyEntry();
 
         }
 
     }
+
     private ArrayList<Integer> colorArrayList(){
         ArrayList<Integer> colors = new ArrayList<>();
         colors.add(Color.BLACK);
@@ -238,30 +241,27 @@ public class MainActivity extends AppCompatActivity implements OnChartGestureLis
 
         ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
         ArrayList<String> xVals = new ArrayList<String>();
-
+        ArrayList<Entry> sumEntry = new ArrayList<>();
         int xvalcount = 366;
         for (int i = 1; i <= xvalcount; i++) {
             xVals.add("" + i);
         }
+
        ArrayList<Integer> colorList = colorArrayList();
         for(int i=0 ; i< portfolioArrayList.size(); i++){
             ArrayList<Entry> yVals = setYAxisValuesForDaily(portfolioArrayList.get(i));
+            for(int j=0;j<yVals.size();j++){
+                sumEntry.add(yVals.get(j));
+            }
             LineDataSet set1;
             set1 = new LineDataSet(yVals,"Data "+(i+1));
             formatSet(set1,colorList.get(i));
             dataSets.add(set1); // add the datasets
         }//end loop of portfolios
-        //GET SUM
-        Portfolio sum = getSum(portfolioArrayList);
-        ArrayList<Entry> sumVals = setYAxisValuesForDaily(sum);
-        LineDataSet set;
-        set = new LineDataSet(sumVals,"SUM");
-        formatSet(set,Color.RED);
-        dataSets.add(set);
-        //END SUM
+
         LineData new_data = new LineData(xVals,dataSets);
         mChart.setData(new_data);
-        CustomMarkerView customMarkerView = new CustomMarkerView(this.getApplicationContext(),R.layout.custom_marker_view_layout,xVals);
+        CustomMarkerView customMarkerView = new CustomMarkerView(this.getApplicationContext(),R.layout.custom_marker_view_layout,xVals,sumEntry);
         mChart.setMarkerView(customMarkerView);
         mChart.getData().notifyDataChanged();
         mChart.notifyDataSetChanged();
@@ -270,7 +270,7 @@ public class MainActivity extends AppCompatActivity implements OnChartGestureLis
     public void addMonthlyEntry(){
         ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
         ArrayList<String> xVals = new ArrayList<String>();
-
+        ArrayList<Entry> sumEntry = new ArrayList<>();
         int xvalcount = 12;
         for (int i = 1; i <= xvalcount; i++) {
             xVals.add(i+"");
@@ -278,22 +278,18 @@ public class MainActivity extends AppCompatActivity implements OnChartGestureLis
         ArrayList<Integer> colorList = colorArrayList();
         for(int i=0 ; i< portfolioArrayList.size(); i++){
             ArrayList<Entry> yVals = setYAxisValuesForMonthly(portfolioArrayList.get(i));
+            for(int j=0;j<yVals.size();j++){
+                sumEntry.add(yVals.get(j));
+            }
             LineDataSet set1;
             set1 = new LineDataSet(yVals,"Data "+(i+1));
             formatSet(set1,colorList.get(i));
             dataSets.add(set1); // add the datasets
 
         }//end loop of portfolios
-        //SUM
-        Portfolio sum = getSum(portfolioArrayList);
-        ArrayList<Entry> sumVals = setYAxisValuesForMonthly(sum);
-        LineDataSet set;
-        set = new LineDataSet(sumVals,"SUM");
-        formatSet(set,Color.RED);
-        dataSets.add(set);
-        //END SUM
+
         LineData new_data = new LineData(xVals,dataSets);
-        CustomMarkerView customMarkerView = new CustomMarkerView(this.getApplicationContext(),R.layout.custom_marker_view_layout,xVals);
+        CustomMarkerView customMarkerView = new CustomMarkerView(this.getApplicationContext(),R.layout.custom_marker_view_layout,xVals,sumEntry);
         mChart.setMarkerView(customMarkerView);
         mChart.setData(new_data);
         mChart.getData().notifyDataChanged();
@@ -304,7 +300,7 @@ public class MainActivity extends AppCompatActivity implements OnChartGestureLis
     public void addQuarterlyEntry(){
         ArrayList<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
         ArrayList<String> xVals = new ArrayList<String>();
-
+        ArrayList<Entry> sumEntry = new ArrayList<>();
         int xvalcount = 12;
         for (int i = 0; i < xvalcount; i=i+3) {
             xVals.add(i+3+"");//4 value
@@ -312,21 +308,17 @@ public class MainActivity extends AppCompatActivity implements OnChartGestureLis
         ArrayList<Integer> colorList = colorArrayList();
         for(int i=0 ; i< portfolioArrayList.size(); i++){
             ArrayList<Entry> yVals = setYAxisValuesForQuarterly(portfolioArrayList.get(i));
+            for(int j=0;j<yVals.size();j++){
+                sumEntry.add(yVals.get(j));
+            }
             LineDataSet set1;
             set1 = new LineDataSet(yVals,"Data "+(i+1));
             formatSet(set1,colorList.get(i));
             dataSets.add(set1); // add the datasets
         }//end loop of portfolios
-        //SUM
-        Portfolio sum = getSum(portfolioArrayList);
-        ArrayList<Entry> sumVals = setYAxisValuesForQuarterly(sum);
-        LineDataSet set;
-        set = new LineDataSet(sumVals,"SUM");
-        formatSet(set,Color.RED);
-        dataSets.add(set);
-        //End SUM
+
         LineData new_data = new LineData(xVals,dataSets);
-        CustomMarkerView customMarkerView = new CustomMarkerView(this.getApplicationContext(),R.layout.custom_marker_view_layout,xVals);
+        CustomMarkerView customMarkerView = new CustomMarkerView(this.getApplicationContext(),R.layout.custom_marker_view_layout,xVals,sumEntry);
         mChart.setMarkerView(customMarkerView);
         mChart.setData(new_data);
         mChart.getData().notifyDataChanged();
@@ -448,9 +440,9 @@ public class MainActivity extends AppCompatActivity implements OnChartGestureLis
         sum.setPortfolioId("SUM");
         ArrayList<Nav> navList = new ArrayList<>();
 
-        for(int i=0 ; i<arrayList.size(); i++){
+        for(int i=0 ; i<arrayList.size(); i++){//0,1,2
             ArrayList<Nav> currentList = arrayList.get(i).getNavPoints();
-            for( int j=0; j< currentList.size(); j++){
+            for( int j=0; j< currentList.size(); j++){//0 to 365
                 Nav point = currentList.get(j);
                 int index = searchDate(navList,point);//search current sum navPoint List
 
@@ -551,7 +543,7 @@ public class MainActivity extends AppCompatActivity implements OnChartGestureLis
     public void onItemSelected(AdapterView parent, View view, int position, long id){
         String item = parent.getItemAtPosition(position).toString();
         this.spinnerPosition = position+1;
-
+        ArrayList<Portfolio> tempList = this.portfolioArrayList;
         if(this.portfolioArrayList.size()>0){
             if(this.spinnerPosition == 1){
                 addDailyEntry();
