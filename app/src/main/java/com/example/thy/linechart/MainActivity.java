@@ -12,10 +12,9 @@ import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.thy.linechart.Model.HttpHandler;
+import com.example.thy.linechart.Http.HttpHandler;
 import com.example.thy.linechart.Model.Nav;
 import com.example.thy.linechart.Model.Portfolio;
 import com.github.mikephil.charting.charts.LineChart;
@@ -35,7 +34,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Array;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -43,8 +41,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-
-import static android.graphics.Color.BLACK;
 
 public class MainActivity extends AppCompatActivity implements OnChartGestureListener, OnChartValueSelectedListener, AdapterView.OnItemSelectedListener {
     private LineChart mChart;
